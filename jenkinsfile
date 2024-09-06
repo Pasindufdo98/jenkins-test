@@ -41,11 +41,12 @@ pipeline {
         always {
              emailext (
                         to: "fpasindu@gmail.com",
-                        subject: "Security Scan Status - Failure",
-                        body: "The Security Scan stage has failed!",
+                        subject: "Build ${currentBuild.fullDisplayName}",
+                        body: "Pipeline finished with status: ${currentBuild.result}",
                         attachLog: true
 
                     )
         }
     }
 }
+
