@@ -10,6 +10,16 @@ pipeline {
             steps {
                 echo 'Running tests using JUnit for unit tests and Selenium for integration tests.'
             }
+            post {
+                always {
+                    emailext (
+                        to: "fpasindu@gmail.com",
+                        subject: "Build ${currentBuild.fullDisplayName} - Unit and Integration Tests",
+                        body: "Unit and Integration Tests finished with status: ${currentBuild.result}",
+                        attachLog: true
+                    )
+                }
+            }
         }
         stage('Code Analysis') {
             steps {
@@ -19,6 +29,16 @@ pipeline {
         stage('Security Scan') {
             steps {
                 echo 'Performing security scans using OWASP ZAP.'
+            }
+            post {
+                always {
+                    emailext (
+                        to: "fpasindu@gmail.com",
+                        subject: "Build ${currentBuild.fullDisplayName} - Security Scan",
+                        body: "Security Scan finished with status: ${currentBuild.result}",
+                        attachLog: true
+                    )
+                }
             }
         }
         stage('Deploy to Staging') {
@@ -37,16 +57,4 @@ pipeline {
             }
         }
     }
-    post {
-        always {
-             emailext (
-                        to: "fpasindu@gmail.com",
-                        subject: "Build ${currentBuild.fullDisplayName}",
-                        body: "Pipeline finished with status: ${currentBuild.result}",
-                        attachLog: true
-
-                    )
-        }
-    }
 }
-
