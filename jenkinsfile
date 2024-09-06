@@ -1,45 +1,48 @@
 pipeline {
     agent any
-    
-    environment {
-        DIRECTORY_PATH = 'C:/Users/pasin/T2/Professional practice/jenkinfiles'
-        TESTING_ENVIRONMENT = 'staging'
-        PRODUCTION_ENVIRONMENT = 'Pasindu'
-    }
-    
     stages {
         stage('Build') {
             steps {
-                echo "fetch the source code from the directory path specified by the environment variable: ${env.DIRECTORY_PATH}"
-                echo "compile the code and generate any necessary artifacts"
+                echo 'Using Maven to build the code.'
             }
         }
-        stage('Test') {
+        stage('Unit and Integration Tests') {
             steps {
-                echo "unit tests"
-                echo "integration tests"
+                echo 'Running tests using JUnit for unit tests and Selenium for integration tests.'
             }
         }
-        stage('Code Quality Check') {
+        stage('Code Analysis') {
             steps {
-                echo "check the quality of the code"
+                echo 'Analyzing code quality with SonarQube.'
             }
         }
-        stage('Deploy') {
+        stage('Security Scan') {
             steps {
-                echo "deploy the application to a testing environment specified by the environment variable: ${env.TESTING_ENVIRONMENT}"
+                echo 'Performing security scans using OWASP ZAP.'
             }
         }
-        stage('Approval') {
+        stage('Deploy to Staging') {
             steps {
-                echo "waiting for manual approval"
-                sleep(time: 10, unit: 'SECONDS')
+                echo 'Deploying application to AWS EC2 staging instance.'
+            }
+        }
+        stage('Integration Tests on Staging') {
+            steps {
+                echo 'Running integration tests in the staging environment.'
             }
         }
         stage('Deploy to Production') {
             steps {
-                echo "deploy the code to the production environment using the environment variable: ${env.PRODUCTION_ENVIRONMENT}"
+                echo 'Deploying application to AWS EC2 production instance.'
             }
+        }
+    }
+    post {
+        always {
+            mail to: 'fpasindu@gmail.com',
+                 subject: "Build ${currentBuild.fullDisplayName}",
+                 body: "Pipeline finished with status: ${currentBuild.result}",
+                 attachLog: true
         }
     }
 }
